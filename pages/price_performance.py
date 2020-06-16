@@ -2,39 +2,54 @@ import plotly.graph_objects as go
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 
 import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from vnpy.gateway.bitmex import BitmexGateway
-from vnpy.trader.object import ContractData, HistoryRequest, Exchange, Interval, Product
-from vnpy.event import EventEngine
-from vnpy.trader.engine import MainEngine
+from settings import COLORS, PRICE_FIG_LAYOUT, VOLUME_FIG_LAYOUT
+
+from bitmex import request_history
 
 def create_layout(app):
+    # inital figures to load when user visits site
+    df = request_history(symbol='XBTUSD')
+    price_fig = go.Figure(data=[
+        go.Candlestick(
+            x=df['date'],
+            open=df['open'],
+            high=df['high'],
+            low=df['low'],
+            close=df['close'])],
+        layout=PRICE_FIG_LAYOUT)
+    price_fig.update_layout(title='XBTUSD')
 
-    event_engine = EventEngine()
-    main_engine = MainEngine(event_engine)
-    main_engine.add_gateway(BitmexGateway)
-    contract = ContractData(gateway_name='BITMEX', symbol='XBTUSD', exchange=Exchange.BITMEX, name='XBTUSD', product=Product.FUTURES, size=1, pricetick=0.5, min_volume=1, stop_supported=True, net_position=True, history_data=True, option_strike=0, option_underlying='', option_type=None, option_expiry=None)
-    req = HistoryRequest(symbol='XBTUSD', exchange=Exchange.BITMEX, interval=Interval.HOUR, end=datetime.today(), start=datetime(2020,6,1))
-    gateway = main_engine.get_gateway('BITMEX')
-    gateway.query_history(req)
-    data = main_engine.query_history(req, contract.gateway_name)
+    volume_fig = go.Figure(data=[go.Bar(x=df['date'], y=df['volume'], marker_color=df['color'])], layout=VOLUME_FIG_LAYOUT)
+    volume_fig.update_layout(title='XBTUSD Volume')
 
-    data_list = []
-    for i in data:
-        data_list.append({'date': i.datetime, 'close_price': i.close_price, 'high_price': i.high_price, 'low_price': i.low_price, 'open_price': i.open_price, 'volume': i.volume})
-    df = pd.DataFrame(data_list)
-    df['bar_color'] = np.where(df['close_price'] > df['open_price'], 'green', 'red')
-
-    price_fig = go.Figure(data=[go.Candlestick(x=df['date'], 
-                                        open=df['open_price'],
-                                        high=df['high_price'],
-                                        low=df['low_price'],
-                                        close=df['close_price'])])
-    price_fig.update_layout(xaxis_rangeslider_visible=False)
-    volume_fig = go.Figure(data=[go.Bar(x=df['date'], y=df['volume'], marker_color=df['bar_color'])])
-    
-    return html.Div([dcc.Graph(figure=price_fig), dcc.Graph(figure=volume_fig)])
+    return html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(dcc.Dropdown(id='ticker-symbol', options=pd.read_csv(r"C:\Users\Parke\Documents\GitHub\sigma-dash\data\bitmex_tickers.csv").to_dict(orient='records'), multi=False, value='XBTUSD')),
+                dbc.Col(html.Div("One of three columns")),
+            ],
+            align="start",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(dcc.Graph(id='price-fig', figure=price_fig)),
+                dbc.Col(dcc.Graph(id='volume-fig', figure=volume_fig)),
+            ],
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.Div("One of three columns")),
+                dbc.Col(html.Div("One of three columns")),
+            ],
+            align="end",
+        ),
+    ]
+)
