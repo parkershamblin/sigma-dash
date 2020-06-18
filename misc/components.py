@@ -231,23 +231,23 @@ columns = html.Div(
                 dbc.Col(
                     html.Div(
                         "This is column 1",
-                        style={"height": "100px", "border-style": "solid"},
+                        style={"height": "70px", "border-style": "solid"},
                     ),
-                    md=3,
+                    md=2,
                 ),
                 dbc.Col(
                     html.Div(
                         "This is column 2",
-                        style={"height": "100px", "border-style": "solid"},
+                        style={"height": "70px", "border-style": "solid"},
                     ),
-                    md=6,
+                    md=2,
                 ),
                 dbc.Col(
                     html.Div(
                         "This is column 3",
-                        style={"height": "100px", "border-style": "solid"},
+                        style={"height": "70px", "border-style": "solid"},
                     ),
-                    md=3,
+                    md=2,
                 ),
             ],
             no_gutters=True,

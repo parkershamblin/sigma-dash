@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from time import time
-import dateutil.parser
 
 def request_history(symbol, interval_mins=60, load_periods=500):
     
@@ -18,9 +17,9 @@ def request_history(symbol, interval_mins=60, load_periods=500):
     df = pd.DataFrame(req)
     # rename headers to something more explicitive
     df.rename({'t': 'date', 'c': 'close', 'o': 'open', 'h': 'high', 'l': 'low', 'v': 'volume'}, axis=1, inplace=True)
-    # convert date column from unix to datetime object
+    # convert date column from unix time to datetime object
     df['date'] = pd.to_datetime(df['date'], origin='unix', unit='s')
-    # add colors to customization volume bar chart
+    # add colors to customize volume bar chart
     df['color'] = np.where(df['close'] > df['open'], 'green', 'red')
 
     return df
