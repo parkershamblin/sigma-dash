@@ -42,7 +42,7 @@ class TabContent:
                     html.Div([
                         dcc.Graph(
                             id=f"{self.name}-price-fig",
-                            figure=TradingChart(symbol="XBTUSD").get_figure(),
+                            figure=TradingChart(symbol=self.symbol).get_figure(),
                             ),
                         html.P(self.name, className="card-text"),
                     ])

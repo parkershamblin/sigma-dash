@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from app import app
-from pages import chart, homepage, cryptocurrencies
+from pages import homepage, cryptocurrencies
 
 app.layout = html.Div(
     [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
@@ -14,8 +14,6 @@ app.layout = html.Div(
 def display_page(pathname):
     if pathname == "/":
         return homepage.layout
-    elif pathname == "/chart":
-        return chart.load_inital_figures()
     elif pathname == "/cryptocurrencies":
         return cryptocurrencies.layout
     else:
