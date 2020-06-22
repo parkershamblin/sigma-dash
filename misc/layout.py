@@ -68,7 +68,7 @@ tv_ticker_header = html.Div(
                     ),
                     md=2,
                 ),
-                            dbc.Col(
+                dbc.Col(
                     html.Div(
                         "This is column 1",
                         style={"height": "70px", "border-style": "solid"},

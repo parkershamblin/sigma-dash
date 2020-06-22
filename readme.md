@@ -21,3 +21,6 @@ https://dash.plotly.com/dash-core-components
 - [ ] Add url to crypto market dataframe where if user clicks on name they will be brought to full featured chart of the ticker they clicked on. https://community.plotly.com/t/links-in-datatable-multipage-app/26081/14
 - [ ] Add tab style from Bitmex.
 - [ ] Add graphs from Bitmex.
+- [ ] Clean up imports.
+- [ ] Add date range selector.
+- [ ] Add interval bucket selector.

@@ -11,34 +11,39 @@ from coinmarketcap import crypto_market
 crypto_market_df = crypto_market()
 
 
-layout = html.Div([
-    navbar,
-    dash_table.DataTable(
-            id='top-crypto-table',
+layout = html.Div(
+    [
+        navbar,
+        dash_table.DataTable(
+            id="top-crypto-table",
             columns=[{"name": i, "id": i} for i in crypto_market_df.columns],
-            data=crypto_market_df.to_dict('records'),
+            data=crypto_market_df.to_dict("records"),
             style_data_conditional=[
                 {
-                    'if': {
-                        'filter_query': '{{{col}}} < 0'.format(col=col),
-                        'column_id': col
+                    "if": {
+                        "filter_query": "{{{col}}} < 0".format(col=col),
+                        "column_id": col,
                     },
-                    'color': 'red',
-                } for col in crypto_market_df.columns
-            ] +
-            [
+                    "color": "red",
+                }
+                for col in crypto_market_df.columns
+            ]
+            + [
                 {
-                    'if': {
-                        'filter_query': '{{{col}}} > 0'.format(col=col),
-                        'column_id': col
+                    "if": {
+                        "filter_query": "{{{col}}} > 0".format(col=col),
+                        "column_id": col,
                     },
-                    'color': 'green',
-                } for col in crypto_market_df.columns
+                    "color": "green",
+                }
+                for col in crypto_market_df.columns
             ],
-            css=[{
-                'selector': '.dash-spreadsheet-container .dash-spreadsheet-inner *, .dash-spreadsheet-container .dash-spreadsheet-inner *:after, .dash-spreadsheet-container .dash-spreadsheet-inner *:before',
-                'rule': 'box-sizing: inherit; width: 50%;'
-            }]
-        )
-    ])
-
+            css=[
+                {
+                    "selector": ".dash-spreadsheet-container .dash-spreadsheet-inner *, .dash-spreadsheet-container .dash-spreadsheet-inner *:after, .dash-spreadsheet-container .dash-spreadsheet-inner *:before",
+                    "rule": "box-sizing: inherit; width: 50%;",
+                }
+            ],
+        ),
+    ]
+)

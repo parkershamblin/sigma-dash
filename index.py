@@ -14,23 +14,22 @@ from dash.dependencies import Input, Output
 from app import app
 from pages import chart, homepage, cryptocurrencies
 
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
-])
+app.layout = html.Div(
+    [dcc.Location(id="url", refresh=False), html.Div(id="page-content")]
+)
 
 
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def display_page(pathname):
-    if pathname == '/':
+    if pathname == "/":
         return homepage.layout
-    elif pathname == '/chart':
+    elif pathname == "/chart":
         return chart.load_inital_figures()
-    elif pathname == '/cryptocurrencies':
+    elif pathname == "/cryptocurrencies":
         return cryptocurrencies.layout
     else:
-        return '404'
+        return "404"
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run_server(debug=True)
