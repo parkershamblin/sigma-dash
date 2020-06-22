@@ -1,7 +1,3 @@
-COLORS = {
-    "background": "#111111",
-}
-
 PRICE_FIG_LAYOUT = dict(
     xaxis_title="Date", yaxis_title="Price", xaxis_rangeslider_visible=False,
 )

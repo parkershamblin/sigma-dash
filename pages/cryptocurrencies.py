@@ -1,15 +1,10 @@
-import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-
-from app import app
 
 from layout_components import navbar
 from coinmarketcap import crypto_market
 
-
 crypto_market_df = crypto_market()
-
 
 layout = html.Div(
     [

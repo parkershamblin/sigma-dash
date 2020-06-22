@@ -1,16 +1,9 @@
-"""
-Includes layout components that are used by multiple pages.
-"""
+# This file contains layout components that are used by multiple pages.
 
-import dash
-import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
-
 SIGMA_DASH_LOGO = "https://user-images.githubusercontent.com/53675680/84823182-eefdb080-afeb-11ea-828f-ce1856c444c5.png"
-
 
 search_bar = dbc.Row(
     [

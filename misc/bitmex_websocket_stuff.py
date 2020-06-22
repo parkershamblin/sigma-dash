@@ -6,7 +6,8 @@ from time import sleep
 # Basic use of websocket.
 def run():
     logger = setup_logger()
-    # Instantiating the WS will make it connect. Be sure to add your api_key/api_secret.
+    # Instantiating the WS will make it connect.
+    # Be sure to add your api_key/api_secret.
     ws = BitMEXWebsocket(
         endpoint="https://testnet.bitmex.com/api/v1",
         symbol="XBTUSD",

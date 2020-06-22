@@ -1,45 +1,23 @@
 import requests
 import pandas as pd
 import numpy as np
-from time import time
 from bitmex_websocket import BitMEXWebsocket
+from datetime import datetime as dt
 
 
-def request_history(symbol, interval_mins=60, load_periods=500):
-    # TODO Allow user to input start and end date.
-    # Do calculation to caculate num of load_periods needed for date range.
+def request_history(
+    symbol="XBTUSD",
+    bin_size="1h",
+    count=1000,
+    start=dt.now(),
+    end="",
+    partial=True,
+):
+    baseurl = "https://www.bitmex.com/api/v1/trade/bucketed?binSize="
+    url = f"{baseurl}{bin_size}&partial={partial}&symbol={symbol}&count={count}&reverse=True"
 
-    end_t = int(time()) + 120 * interval_mins
-    end_t -= end_t % (60 * interval_mins)
-    start_t = end_t - load_periods * 60 * interval_mins
-
-    baseurl = "https://www.bitmex.com/api"
-    url = (
-        baseurl
-        + f"/udf/history?symbol={symbol}&resolution={interval_mins}&from={start_t}&to={end_t}"
-    )
     req = requests.get(url).json()
-
     df = pd.DataFrame(req)
-    # rename headers to something more explicitive
-    df.rename(
-        {
-            "t": "date",
-            "c": "close",
-            "o": "open",
-            "h": "high",
-            "l": "low",
-            "v": "volume",
-        },
-        axis=1,
-        inplace=True,
-    )
-    # convert date column from unix time to datetime object
-    df["date"] = pd.to_datetime(df["date"], origin="unix", unit="s")
-    # add colors to customize volume bar chart
-    df["color"] = np.where(df["close"] > df["open"], "green", "red")
-    # convert index to datetime object
-    df.index = df["date"]
 
     return df
 
@@ -47,7 +25,6 @@ def request_history(symbol, interval_mins=60, load_periods=500):
 class TradingChart:
     def __init__(self, symbol):
         df = request_history(symbol=symbol)
-        df.head()
 
         INCREASING_COLOR = "#008000"
         DECREASING_COLOR = "#FF0000"
@@ -59,7 +36,7 @@ class TradingChart:
                 high=df.high,
                 low=df.low,
                 close=df.close,
-                x=df.index,
+                x=df.timestamp,
                 yaxis="y2",
                 name="GS",
                 increasing=dict(line=dict(color=INCREASING_COLOR)),
@@ -74,9 +51,7 @@ class TradingChart:
         self.fig["layout"] = dict()
         self.fig["layout"]["plot_bgcolor"] = "rgb(250, 250, 250)"
         self.fig["layout"]["xaxis"] = dict(rangeselector=dict(visible=True))
-        self.fig["layout"]["yaxis"] = dict(
-            domain=[0, 0.2], showticklabels=False
-        )
+        self.fig["layout"]["yaxis"] = dict(domain=[0, 0.2], showticklabels=False)
         self.fig["layout"]["yaxis2"] = dict(domain=[0.2, 0.8])
         self.fig["layout"]["legend"] = dict(
             orientation="h", y=0.9, x=0.3, yanchor="bottom"
@@ -92,21 +67,9 @@ class TradingChart:
             buttons=list(
                 [
                     dict(count=1, label="reset", step="all"),
-                    dict(
-                        count=1, label="1yr", step="year", stepmode="backward"
-                    ),
-                    dict(
-                        count=3,
-                        label="3 mo",
-                        step="month",
-                        stepmode="backward",
-                    ),
-                    dict(
-                        count=1,
-                        label="1 mo",
-                        step="month",
-                        stepmode="backward",
-                    ),
+                    dict(count=1, label="1yr", step="year", stepmode="backward"),
+                    dict(count=3, label="3 mo", step="month", stepmode="backward",),
+                    dict(count=1, label="1 mo", step="month", stepmode="backward",),
                     dict(step="all"),
                 ]
             ),
@@ -119,7 +82,7 @@ class TradingChart:
             return np.convolve(interval, window, "same")
 
         mv_y = movingaverage(df.close)
-        mv_x = list(df.index)
+        mv_x = list(df.timestamp)
 
         # Clip the ends
         mv_x = mv_x[5:-5]
@@ -151,7 +114,7 @@ class TradingChart:
 
         self.fig["data"].append(
             dict(
-                x=df.index,
+                x=df.timestamp,
                 y=df.volume,
                 marker=dict(color=colors),
                 type="bar",
@@ -171,7 +134,7 @@ class TradingChart:
 
         self.fig["data"].append(
             dict(
-                x=df.index,
+                x=df.timestamp,
                 y=bb_upper,
                 type="scatter",
                 yaxis="y2",
@@ -185,7 +148,7 @@ class TradingChart:
 
         self.fig["data"].append(
             dict(
-                x=df.index,
+                x=df.timestamp,
                 y=bb_lower,
                 type="scatter",
                 yaxis="y2",
