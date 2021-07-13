@@ -1,4 +1,7 @@
-# sigma-dash
+# crypto-guru
+
+## Summary
+This project is just for fun/personal use and made to help introduce my friend web dev with Python.
 
 ## Task List
 - [x] Add volume chart
